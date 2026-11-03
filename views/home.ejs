@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <title>Wypożyczalnia i Sklep z Książkami</title>
+    <%- include('partials/head') %>
+</head>
+<body>
+    <%- include('partials/header') %>
+ 
+    <main>
+        <section class="hero">
+            <h2>Witaj w naszej księgarni!</h2>
+            <p>Odkryj tysiące książek do wypożyczenia online lub kup fizyczne egzemplarze.</p>
+           
+            <div class="actions">
+                <% if (isAuthenticated) { %>
+                    <a href="/browse" class="button primary">Przeglądaj książki</a>
+                    <a href="/profile" class="button secondary">Mój profil</a>
+                <% } else { %>
+                    <a href="/browse" class="button primary">Przeglądaj książki</a>
+                    <a href="/signup" class="button secondary">Zarejestruj się</a>
+                <% } %>
+            </div>
+        </section>
+ 
+        <section class="features">
+            <div class="feature-item">
+                <h3 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Wypożyczaj online
+                </h3>
+                <p>Dostęp do cyfrowych wersji książek w dowolnym miejscu i czasie.</p>
+            </div>
+            
+            <div class="feature-item">
+                <h3 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                        <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                    </svg>
+                    Kupuj fizyczne
+                </h3>
+                <p>Zamawiaj swoje ulubione tytuły z dostawą do domu.</p>
+            </div>
+            
+            <div class="feature-item">
+                <h3 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                    Twoja kolekcja
+                </h3>
+                <p>Zarządzaj swoją biblioteczką.</p>
+            </div>
+        </section>
+ 
+        <section class="book-showcase">
+            <h2>Popularne tytuły</h2>
+            <div class="books-grid">
+                <% if (topBooks && topBooks.length > 0) { %>
+                    <% topBooks.forEach(book => { %>
+                        <div class="book-card">
+                            <img src="<%= book.cover_image_url || '/images/covers/no_cover.jpg' %>" alt="<%= book.title %>">
+                            <h3><%= book.title %></h3>
+                            <p><%= book.author_name %></p>
+                            <a href="/browse/<%= book.id %>" class="button small">Więcej</a>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <p>Brak popularnych książek.</p>
+                <% } %>
+            </div>
+        </section>
+    </main>
+ 
+    <%- include('partials/footer') %>
+</body>
+</html>

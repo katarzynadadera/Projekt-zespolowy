@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <title>Kasa - <%= type === 'cart' ? 'Twój Koszyk' : (items[0] ? items[0].title : 'Zamówienie') %></title>
+    <%- include('partials/head') %>
+    <link rel="stylesheet" href="/css/checkout.css">
+</head>
+<body class="checkout-body">
+ 
+    <div class="checkout-layout">
+        <div class="checkout-main">
+            <header class="checkout-header">
+                <h1>
+                    <a href="/">Księgarnia Online</a>
+                    <span class="header-divider">|</span>
+                    <span class="header-subtitle">Realizacja zamówienia</span>
+                </h1>
+            </header>
+ 
+            <div class="checkout-content">
+                <% if (!isLoggedIn) { %>
+                    <div class="auth-prompt-card">
+                        <div class="auth-info">
+                            <h3>Masz już konto?</h3>
+                            <p>Zaloguj się, aby uzupełnić dane automatycznie.</p>
+                        </div>
+                        <a href="/login?redirect=<%= type === 'cart' ? '/checkout/cart' : '/checkout/' + (typeof bookId !== 'undefined' ? bookId : '') %>" class="button secondary small">Zaloguj się</a>
+                    </div>
+                <% } %>
+ 
+                <form id="checkout-form" action="<%= type === 'cart' ? '/orders/create-from-cart' : '/checkout/' + bookId %>" method="POST">
+                    
+                    <div class="form-section">
+                        <h2>1. Dane kontaktowe</h2>
+                        <div class="form-group">
+                            <label>Adres e-mail *</label>
+                            <input type="email" name="email" class="input-field" value="<%= user.email || '' %>" required>
+                        </div>
+                    </div>
+ 
+                    <div class="form-section">
+                        <h2>2. Adres dostawy / Rozliczeniowy</h2>
+                        
+                        <div class="form-row">
+                            <div class="form-group half">
+                                <label>Imię *</label>
+                                <input type="text" name="first_name" class="input-field" value="<%= user.first_name || '' %>" required pattern="^[A-Za-zA-ZĄĆĘŁŃÓŚŹŻąćęłńóśźż\s\-]+$" title="Imię może zawierać tylko litery">
+                            </div>
+                            <div class="form-group half">
+                                <label>Nazwisko *</label>
+                                <input type="text" name="last_name" class="input-field" value="<%= user.last_name || '' %>" required pattern="^[A-Za-zA-ZĄĆĘŁŃÓŚŹŻąćęłńóśźż\s\-]+$" title="Nazwisko może zawierać tylko litery">
+                            </div>
+                        </div>
+ 
+                        <div class="form-row">
+                            <div class="form-group half" style="flex: 2;">
+                                <label>Ulica *</label>
+                                <input type="text" name="street" class="input-field" value="<%= address.street || '' %>" required>
+                            </div>
+                            <div class="form-group half" style="flex: 1;">
+                                <label>Nr budynku *</label>
+                                <input type="text" name="house_number" class="input-field" value="<%= address.house_number || '' %>" required>
+                            </div>
+                        </div>
+ 
+                        <div class="form-row">
+                            <div class="form-group half">
+                                <label>Miasto *</label>
+                                <input type="text" name="city" class="input-field" value="<%= address.city || '' %>" required pattern="^[A-Za-zA-ZĄĆĘŁŃÓŚŹŻąćęłńóśźż\s\-]+$" title="Miasto może zawierać tylko litery">
+                            </div>
+                            <div class="form-group half">
+                                <label>Kod pocztowy *</label>
+                                <input type="text" name="postal_code" class="input-field" value="<%= address.postal_code || '' %>" required pattern="^[0-9]{2}-[0-9]{3}$" placeholder="np. 00-000" title="Format kodu pocztowego to XX-XXX">
+                            </div>
+                        </div>
+                    </div>
+ 
+                    <div class="form-section">
+                        <h2>3. Metoda płatności</h2>
+                        <div class="payment-methods">
+                            <label class="payment-option">
+                                <input type="radio" name="payment_method" value="card" checked>
+                                <div class="payment-card">
+                                    <svg class="pay-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                                    <span class="payment-name">Karta Płatnicza</span>
+                                </div>
+                            </label>
+                            
+                            <label class="payment-option">
+                                <input type="radio" name="payment_method" value="blik">
+                                <div class="payment-card">
+                                    <svg class="pay-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
+                                    <span class="payment-name">BLIK</span>
+                                </div>
+                            </label>
+                            
+                            <% if (typeof hasPhysicalItems !== 'undefined' && hasPhysicalItems) { %>
+                            <label class="payment-option">
+                                <input type="radio" name="payment_method" value="cod">
+                                <div class="payment-card">
+                                    <svg class="pay-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                                    <span class="payment-name">Przy odbiorze</span>
+                                </div>
+                            </label>
+                            <% } %>
+                        </div>
+                    </div>
+                    
+                    <input type="hidden" name="selected_payment" id="selected-payment-method" value="card">
+ 
+                    <div class="checkout-actions">
+                        <a href="<%= type === 'cart' ? '/cart' : '/browse/' + bookId %>" class="back-link">← Wróć do koszyka</a>
+                        <button type="button" id="open-payment-btn" class="button primary big">Przejdź do płatności</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+ 
+        <div class="checkout-sidebar">
+            <h2 style="margin-top: 0; margin-bottom: 25px; font-size: 18px;">Podsumowanie zamówienia</h2>
+            
+            <div class="order-summary-items">
+                <% items.forEach(item => { %>
+                    <div class="product-preview">
+                        <div class="thumbnail-wrapper">
+                            <span class="qty-badge"><%= item.quantity || 1 %></span>
+                            <img src="<%= item.cover_image_url || '/images/covers/no_cover.jpg' %>" alt="<%= item.title %>">
+                        </div>
+                        <div class="product-description">
+                            <h4 class="product-title"><%= item.title %></h4>
+                            <p class="product-variant"><%= item.format === 'digital' ? 'E-book' : 'Wersja Fizyczna' %></p>
+                            <div style="margin-top: 8px;">
+                                <span class="product-price"><%= item.price %> PLN</span>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+ 
+            <% if (typeof hasPhysicalItems !== 'undefined' && hasPhysicalItems) { %>
+                <div style="display: flex; justify-content: space-between; margin-top: 20px; color: var(--text-muted);">
+                    <span>Dostawa</span>
+                    <span><%= shippingCost %> PLN</span>
+                </div>
+            <% } %>
+ 
+            <div class="total-row">
+                <span>Do zapłaty:</span>
+                <span class="total-amount"><%= (Number(total) + (typeof shippingCost !== 'undefined' ? Number(shippingCost) : 0)).toFixed(2) %> PLN</span>
+            </div>
+ 
+            <footer class="checkout-footer">
+                <p>Bezpieczne płatności obsługuje <strong>Stripe</strong></p>
+                <div style="margin-top: 10px; display: flex; gap: 10px; justify-content: center; opacity: 0.5;">
+                    <svg width="30" height="20" viewBox="0 0 30 20"><rect width="30" height="20" fill="#ccc" rx="3"/></svg>
+                    <svg width="30" height="20" viewBox="0 0 30 20"><rect width="30" height="20" fill="#ccc" rx="3"/></svg>
+                </div>
+            </footer>
+        </div>
+    </div>
+ 
+    <div id="payment-modal" class="modal-overlay">
+        <div class="payment-modal-content">
+            <div class="modal-header">
+                <h3>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                    Bezpieczna Płatność
+                </h3>
+                <button type="button" class="close-modal">&times;</button>
+            </div>
+            
+            <div id="payment-error" class="message error" style="display: none; margin: 15px 24px 0 24px;"></div>
+ 
+            <div id="payment-main-view">
+                
+                <div id="card-details" class="payment-details-container">
+                    <div class="credit-card-form">
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label class="tiny-label">Numer karty</label>
+                            <div class="input-with-icon">
+                                <input type="text" id="card-number" class="input-field card-input" placeholder="0000 0000 0000 0000" maxlength="19">
+                                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label class="tiny-label">Imię i nazwisko na karcie</label>
+                            <input type="text" id="card-name" class="input-field" placeholder="JAN KOWALSKI">
+                        </div>
+                        <div class="form-row" style="margin-bottom: 0;">
+                            <div class="form-group half" style="margin-bottom: 0;">
+                                <label class="tiny-label">Ważność</label>
+                                <input type="text" id="card-expiry" class="input-field" placeholder="MM/YY" maxlength="5">
+                            </div>
+                            <div class="form-group half" style="margin-bottom: 0;">
+                                <label class="tiny-label">CVC</label>
+                                <div class="input-with-icon">
+                                    <input type="text" id="card-cvc" class="input-field" placeholder="123" maxlength="3">
+                                    <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="secure-badge">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        Szyfrowanie SSL 256-bit
+                    </div>
+                </div>
+ 
+                <div id="blik-details" class="payment-details-container" style="display: none;">
+                    <div class="blik-container">
+                        <img src="https://ocdn.eu/images/pulscms/MjI7MDA_/47d1747e92389d4ddfcd92c81fbbaad8.png" alt="BLIK" style="height: 40px; margin-bottom: 15px;">
+                        <input type="text" id="blik-code" class="input-field blik-input" placeholder="000 000" maxlength="6">
+                        <p class="blik-hint">Przepisz kod z aplikacji bankowej.</p>
+                    </div>
+                </div>
+ 
+                <div id="cod-details" class="payment-details-container" style="display: none;">
+                    <div class="blik-container" style="text-align: left;">
+                        <div style="display: flex; gap: 15px; align-items: flex-start;">
+                            <div style="background: #e0f2fe; padding: 10px; border-radius: 50%; color: #0284c7;">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                            </div>
+                            <div>
+                                <h4 style="margin: 0 0 5px 0; color: var(--text-main);">Płatność u kuriera</h4>
+                                <p style="margin: 0; font-size: 14px; color: var(--text-muted); line-height: 1.5;">Zapłacisz gotówką lub kartą w momencie odbioru przesyłki. Upewnij się, że podany adres jest poprawny.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+ 
+                <div class="modal-footer">
+                    <div class="total-to-pay">
+                        <span>Do zapłaty:</span>
+                        <strong style="font-size: 20px;"><%= (Number(total) + (typeof shippingCost !== 'undefined' ? Number(shippingCost) : 0)).toFixed(2) %> PLN</strong>
+                    </div>
+                    <button type="button" id="confirm-payment-btn" class="button primary big full-width">Zapłać i zamów</button>
+                </div>
+            </div>
+ 
+            <div id="payment-processing-view" style="display: none;">
+                <div class="processing-container">
+                    <div class="spinner-ring"></div>
+                    <h4 id="processing-status">Przetwarzanie...</h4>
+                    <p class="processing-desc">Prosimy nie zamykać tego okna.</p>
+                </div>
+            </div>
+ 
+            <div id="payment-success-view" style="display: none; flex-direction: column; align-items: center; justify-content: center; padding: 40px; text-align: center;">
+                <div style="width: 80px; height: 80px; border-radius: 50%; background: #d1fae5; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+                    <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </div>
+                <h3 style="font-size: 22px; color: #065f46; margin-bottom: 10px;">Dziękujemy!</h3>
+                <p style="color: var(--text-muted); margin-bottom: 0;">Trwa przekierowanie...</p>
+            </div>
+        </div>
+    </div>
+ 
+    <script src="/js/checkout-validation.js"></script>
+</body>
+</html>

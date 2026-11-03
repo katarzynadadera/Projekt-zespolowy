@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <title>Historia Zamówień - Księgarnia Online</title>
+    <%- include('partials/head') %>
+</head>
+<body>
+    <%- include('partials/header') %>
+ 
+    <main class="my-books-page">
+        <div class="my-books-container">
+            <h2 class="my-books-title">Historia Zamówień</h2>
+            <p class="my-books-subtitle">Wszystkie Twoje zamówienia i ich status.</p>
+ 
+            <% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
+                <p class="message error"><%= errorMessage %></p>
+            <% } %>
+ 
+            <% if (orders && orders.length > 0) { %>
+                <div class="orders-table-container">
+                    <table class="orders-table">
+                        <thead>
+                            <tr>
+                                <th>Produkt</th>
+                                <th>Data zamówienia</th>
+                                <th>Status</th>
+                                <th>Kwota</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% orders.forEach(order => { %>
+                                <tr>
+                                    <td data-label="Produkt">
+                                        <div class="order-book-info">
+                                            <img src="<%= order.cover_image_url || '/images/covers/no_cover.jpg' %>" alt="Okładka" class="order-cover">
+                                            <span><%= order.title %></span>
+                                        </div>
+                                    </td>
+                                    <td data-label="Data">
+                                        <%= order.date %>
+                                    </td>
+                                    <td data-label="Status">
+                                        <span class="status-badge status-<%= order.status %>">
+                                            <%= order.statusLabel %>
+                                        </span>
+                                    </td>
+                                    <td data-label="Kwota">
+                                        <span class="price-text"><%= order.total_price %> PLN</span>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            <% } else { %>
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#8D99AE" stroke-width="1.5"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                    </div>
+                    <h3 class="empty-state-title">Brak historii zamówień</h3>
+                    <p class="empty-state-text">Jeszcze nic nie kupiłeś/aś.</p>
+                    <p class="empty-state-text">Przeglądaj naszą ofertę i znajdź coś dla siebie!</p>
+                    <a href="/browse" class="button primary" style="margin-top: 2rem;">Przeglądaj książki</a>
+                </div>
+            <% } %>
+        </div>
+    </main>
+ 
+    <%- include('partials/footer') %>
+</body>
+</html>

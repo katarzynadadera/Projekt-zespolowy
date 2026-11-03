@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <title>Edytuj Książkę - Admin</title>
+    <%- include('../partials/head') %>
+</head>
+<body>
+    <%- include('../partials/header') %>
+    <main class="form-page">
+        <div class="form-container" style="max-width: 800px;">
+            <h2>Edytuj książkę #<%= book.id %></h2>
+            
+            <% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
+                <p class="message error"><%= errorMessage %></p>
+            <% } %>
+
+            <form action="/admin/books/edit/<%= book.id %>" method="POST">
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label>Tytuł *</label>
+                        <input type="text" name="title" required value="<%= book.title %>">
+                    </div>
+                    <div class="form-group half">
+                        <label>ISBN</label>
+                        <input type="text" name="isbn" maxlength="13" value="<%= book.isbn || '' %>">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label>Autor (Imię i Nazwisko) *</label>
+                        <input type="text" name="author_name" required value="<%= book.author_name %>">
+                    </div>
+
+                    <div class="form-group half">
+                        <label>Kategoria</label>
+                        <select name="category_id">
+                            <option value="">-- Wybierz kategorię --</option>
+                            <% categories.forEach(cat => { %>
+                                <option value="<%= cat.id %>" <%= book.category_id === cat.id ? 'selected' : '' %>><%= cat.name %></option>
+                            <% }); %>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label>Rok wydania</label>
+                        <input type="number" name="publication_year" min="1000" max="2100" value="<%= book.publication_year %>">
+                    </div>
+                    <div class="form-group half">
+                        <label>Link do okładki (URL w systemie)</label>
+                        <input type="text" name="cover_image_url" value="<%= book.cover_image_url || '' %>">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Opis książki</label>
+                    <textarea name="description" rows="4"><%= book.description || '' %></textarea>
+                </div>
+
+                <h3 style="margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">Dostępność i Ceny</h3>
+
+                <div style="background: #fdfbf7; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <label style="display:flex; align-items:center; gap: 10px; font-weight: bold; cursor: pointer;">
+                        <input type="checkbox" name="is_physical_available" <%= book.is_physical_available ? 'checked' : '' %>>
+                        Wersja Fizyczna Dostępna
+                    </label>
+                    <div class="form-row" style="margin-top: 10px;">
+                        <div class="form-group half">
+                            <label>Cena (PLN)</label>
+                            <input type="number" step="0.01" name="physical_price" value="<%= book.physical_price %>">
+                        </div>
+                        <div class="form-group half">
+                            <label>Stan magazynowy</label>
+                            <input type="number" name="physical_stock" value="<%= book.physical_stock %>">
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: #eff6ff; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <label style="display:flex; align-items:center; gap: 10px; font-weight: bold; cursor: pointer;">
+                        <input type="checkbox" name="is_digital_available" <%= book.is_digital_available ? 'checked' : '' %>>
+                        E-book Dostępny
+                    </label>
+                    <div class="form-row" style="margin-top: 10px;">
+                        <div class="form-group half">
+                            <label>Cena E-booka (PLN)</label>
+                            <input type="number" step="0.01" name="digital_price" value="<%= book.digital_price %>">
+                        </div>
+                        <div class="form-group half">
+                            <label>Plik E-booka (np. /files/moj_ebook.pdf)</label>
+                            <input type="text" name="pdf_file_url" value="<%= book.pdf_file_url || '' %>">
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="button primary big" style="width: 100%">Zapisz zmiany</button>
+            </form>
+            <p><a href="/admin/books">Anuluj i wróć do listy</a></p>
+        </div>
+    </main>
+    <%- include('../partials/footer') %>
+</body>
+</html>

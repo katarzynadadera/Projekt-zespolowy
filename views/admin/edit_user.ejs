@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <title>Edytuj Użytkownika - Admin</title>
+    <%- include('../partials/head') %>
+</head>
+<body>
+    <%- include('../partials/header') %>
+    <main class="form-page">
+        <div class="form-container" style="max-width: 600px;">
+            <h2>Edycja Użytkownika #<%= user.id %></h2>
+            
+            <% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
+                <p class="message error"><%= errorMessage %></p>
+            <% } %>
+
+            <form action="/admin/users/edit/<%= user.id %>" method="POST">
+                <div class="form-group">
+                    <label>Nazwa użytkownika</label>
+                    <input type="text" name="username" value="<%= user.username %>" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="text" name="email" value="<%= user.email %>" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label>Imię</label>
+                        <input type="text" name="first_name" value="<%= user.first_name || '' %>">
+                    </div>
+                    <div class="form-group half">
+                        <label>Nazwisko</label>
+                        <input type="text" name="last_name" value="<%= user.last_name || '' %>">
+                    </div>
+                </div>
+
+                <button type="submit" class="button primary big" style="width: 100%">Zapisz zmiany</button>
+            </form>
+            <p><a href="/admin/users">Anuluj i wróć do listy</a></p>
+        </div>
+    </main>
+    <%- include('../partials/footer') %>
+</body>
+</html>

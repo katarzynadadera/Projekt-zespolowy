@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <title>Rejestracja - Księgarnia Online</title>
+    <%- include('partials/head') %>
+</head>
+<body>
+    <%- include('partials/header') %>
+ 
+    <main class="form-page">
+        <div class="form-container">
+            <h2>Zarejestruj się</h2>
+ 
+            <% if (typeof successMessage !== 'undefined' && successMessage) { %>
+                <p class="message success"><%= successMessage %></p>
+            <% } %>
+ 
+            <% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
+                <p class="message error"><%= errorMessage %></p>
+            <% } %>
+ 
+            <form action="/signup" method="POST" novalidate>
+                <div class="form-group">
+                    <label for="username">Nazwa użytkownika:</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="text" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Hasło:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password">Potwierdź hasło:</label>
+                    <input type="password" id="confirm-password" name="confirm-password" required>
+                </div>
+                <button type="submit" class="button primary">Zarejestruj</button>
+            </form>
+            <p>Masz już konto? <a href="/login">Zaloguj się</a></p>
+        </div>
+    </main>
+ 
+    <%- include('partials/footer') %>
+</body>
+</html>

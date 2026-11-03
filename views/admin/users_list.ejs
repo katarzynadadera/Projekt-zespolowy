@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <title>Użytkownicy - Admin</title>
+    <%- include('../partials/head') %>
+    <style>
+        .role-admin-select {
+            border-color: #ef4444;
+            color: #ef4444;
+            font-weight: bold;
+        }
+        .role-select {
+            padding: 5px;
+            width: auto;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/header') %>
+    
+    <main class="container-card" style="max-width: 1200px; margin: 40px auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="margin: 0;">Użytkownicy</h2>
+        </div>
+
+        <div class="orders-table-container" style="box-shadow: none; border: 1px solid #eee;">
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Użytkownik</th>
+                        <th>Email</th>
+                        <th>Rola</th>
+                        <th style="text-align: right;">Akcje</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% users.forEach(user => { %>
+                        <tr>
+                            <td data-label="ID">#<%= user.id %></td>
+                            <td data-label="Użytkownik">
+                                <strong><%= user.username %></strong><br>
+                                <small style="color: #666;">Dołączył: <%= new Date(user.created_at).toLocaleDateString('pl-PL') %></small>
+                            </td>
+                            <td data-label="Email"><%= user.email %></td>
+                            <td data-label="Rola">
+                                <form action="/admin/users/change-role" method="POST">
+                                    <input type="hidden" name="user_id" value="<%= user.id %>">
+                                    
+                                    <% 
+                                       // Logika wyboru klasy CSS
+                                       const selectClass = user.role === 'admin' ? 'input-field role-select role-admin-select' : 'input-field role-select';
+                                    %>
+                                    <select name="role" class="<%= selectClass %>" onchange="this.form.submit()">
+                                        <option value="user" <%= user.role === 'user' ? 'selected' : '' %>>Użytkownik</option>
+                                        <option value="admin" <%= user.role === 'admin' ? 'selected' : '' %>>Administrator</option>
+                                    </select>
+                                </form>
+                            </td>
+                            <td data-label="Akcje" style="text-align: right;">
+                                <div style="display: flex; justify-content: flex-end; gap: 8px;">
+                                    <a href="/admin/users/edit/<%= user.id %>" class="button secondary small">Edytuj</a>
+                                    
+                                    <form action="/admin/users/delete/<%= user.id %>" method="POST" onsubmit="return confirm('Czy na pewno usunąć tego użytkownika? Jego zamówienia zostaną w systemie jako anonimowe.');">
+                                        <button type="submit" class="button secondary small" style="background: #ef4444; color: white;">Usuń</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+        
+        <p style="margin-top: 20px;"><a href="/admin">Wróć do dashboardu</a></p>
+    </main>
+    <%- include('../partials/footer') %>
+</body>
+</html>

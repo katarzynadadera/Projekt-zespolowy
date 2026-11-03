@@ -1,0 +1,72 @@
+<header>
+    <nav>
+        <div class="logo">
+            <h1>
+                <a href="/" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 10px;">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                    Księgarnia Online
+                </a>
+            </h1>
+        </div>
+        <ul>
+            <li><a href="/">Strona Główna</a></li>
+            <li><a href="/browse">Przeglądaj</a></li>
+            <li><a href="/search">Szukaj</a></li>
+           
+            <% if (typeof isAdmin !== 'undefined' && isAdmin) { %>
+                <li><a href="/admin" style="color: #ef4444; font-weight: bold;">Panel Admina</a></li>
+            <% } %>
+            <% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
+                <li class="cart-menu-item">
+                    <a href="#" class="cart-link">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                        Koszyk
+                        <% if (typeof cartCount !== 'undefined' && cartCount > 0) { %>
+                            <span class="cart-badge"><%= cartCount %></span>
+                        <% } %>
+                    </a>
+                   
+                    <div class="cart-dropdown">
+                        <% if (typeof cartItems !== 'undefined' && cartItems.length > 0) { %>
+                            <div class="cart-items-list">
+                                <% cartItems.forEach(item => { %>
+                                    <div class="mini-cart-item" id="cart-item-<%= item.book_id %>-<%= item.format %>">
+                                        <img src="<%= item.cover_image_url || '/images/covers/no_cover.jpg' %>" alt="Okładka">
+                                        <div class="mini-cart-info">
+                                            <p class="mini-title"><%= item.title %></p>
+                                            <p class="mini-details">
+                                                <%= item.format === 'digital' ? 'E-book' : 'Książka' %>
+                                                <strong>x<%= item.quantity %></strong>
+                                            </p>
+                                            <p class="mini-price"><%= item.price %> PLN</p>
+                                        </div>
+                                        <form action="/cart/remove" method="POST">
+                                            <input type="hidden" name="cart_item_id" value="<%= item.cart_item_id %>">
+                                            <button type="submit" class="mini-remove" title="Usuń z koszyka">✕</button>
+                                        </form>
+                                    </div>
+                                <% }); %>
+                            </div>
+                            <div class="mini-cart-footer">
+                                <div class="mini-total">Suma: <strong><%= typeof cartTotal !== 'undefined' ? cartTotal : '0.00' %> PLN</strong></div>
+                                <a href="/checkout/cart" class="button small" style="width: 100%; display: block; text-align: center;">Przejdź do kasy</a>
+                            </div>
+                        <% } else { %>
+                            <div class="empty-mini-cart">Twój koszyk jest pusty</div>
+                        <% } %>
+                    </div>
+                </li>
+ 
+                <li><a href="/profile"><%= username %></a></li>
+                <li>
+                    <form action="/logout" method="POST" style="display:inline;">
+                        <button type="submit" class="nav-button">Wyloguj</button>
+                    </form>
+                </li>
+            <% } else { %>
+                <li><a href="/login">Zaloguj</a></li>
+                <li><a href="/signup">Zarejestruj</a></li>
+            <% } %>
+        </ul>
+    </nav>
+</header>

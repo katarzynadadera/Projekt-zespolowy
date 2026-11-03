@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <title>Zarządzaj Książkami - Admin</title>
+    <%- include('../partials/head') %>
+    <style>
+    /* Klasa dla ukrytych książek */
+    .hidden-book-row {
+        opacity: 0.6;
+        background-color: #f9fafb;
+    }
+</style>
+</head>
+<body>
+    <%- include('../partials/header') %>
+    
+    <main class="container-card" style="max-width: 1200px; margin: 40px auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="margin: 0;">Zarządzaj Książkami</h2>
+            <a href="/admin/books/add" class="button primary small">➕ Dodaj nową</a>
+        </div>
+
+        <% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
+            <p class="message error"><%= errorMessage %></p>
+        <% } %>
+
+        <div class="orders-table-container" style="box-shadow: none; border: 1px solid #eee;">
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tytuł / Autor</th>
+                        <th>Kategoria</th>
+                        <th>Status</th>
+                        <th>Magazyn</th>
+                        <th style="text-align: right;">Akcje</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% books.forEach(book => { %>
+                        <% 
+                            const isVisible = book.is_digital_available || book.is_physical_available;
+                            // Zamiast stylu, przypisujemy nazwę klasy CSS
+                            const rowClass = !isVisible ? 'hidden-book-row' : '';
+                        %>
+
+                        <tr class="<%= rowClass %>">
+                            <td data-label="ID">#<%= book.id %></td>
+                            <td data-label="Książka">
+                                <strong><%= book.title %></strong><br>
+                                <small style="color: #666;"><%= book.author_name %></small>
+                            </td>
+                            <td data-label="Kategoria"><%= book.category_name %></td>
+                            <td data-label="Status">
+                                <% if (isVisible) { %>
+                                    <span class="status-badge status-paid">Widoczna</span>
+                                <% } else { %>
+                                    <span class="status-badge status-cancelled">Ukryta</span>
+                                <% } %>
+                            </td>
+                            <td data-label="Magazyn">
+                                <%= book.physical_stock %> szt.
+                            </td>
+                            <td data-label="Akcje" style="text-align: right;">
+                                <div style="display: flex; justify-content: flex-end; gap: 8px;">
+                                    
+                                    <a href="/admin/books/edit/<%= book.id %>" class="button secondary small" style="background: #3b82f6; color: white; font-size: 0.8rem; text-decoration: none; line-height: 1.6;">Edytuj</a>
+                                    
+                                    <% if (isVisible) { %>
+                                        <form action="/admin/books/hide/<%= book.id %>" method="POST" onsubmit="return confirm('Czy na pewno chcesz ukryć tę książkę w sklepie?');">
+                                            <button type="submit" class="button secondary small" style="background: #f59e0b; font-size: 0.8rem;">Ukryj</button>
+                                        </form>
+                                    <% } else { %>
+                                        <form action="/admin/books/restore/<%= book.id %>" method="POST">
+                                            <button type="submit" class="button secondary small" style="background: #10b981; color: white; font-size: 0.8rem;">Przywróć</button>
+                                        </form>
+                                    <% } %>
+
+                                    <form action="/admin/books/delete/<%= book.id %>" method="POST" onsubmit="return confirm('UWAGA: Czy na pewno chcesz trwale usunąć tę książkę? Tej operacji nie można cofnąć.');">
+                                        <button type="submit" class="button secondary small" style="background: #ef4444; color: white; font-size: 0.8rem;">Usuń</button>
+                                    </form>
+                                    
+                                </div>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+            
+            <% if (books.length === 0) { %>
+                <p style="padding: 20px; text-align: center;">Brak książek w bazie.</p>
+            <% } %>
+        </div>
+        
+        <p style="margin-top: 20px;"><a href="/admin">Wróć do dashboardu</a></p>
+    </main>
+    <%- include('../partials/footer') %>
+</body>
+</html>

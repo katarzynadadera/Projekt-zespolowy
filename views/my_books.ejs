@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <title>Moje Książki - Księgarnia Online</title>
+    <%- include('partials/head') %>
+</head>
+<body>
+    <%- include('partials/header') %>
+
+    <main class="my-books-page">
+        <div class="my-books-container">
+            <h2 class="my-books-title">Twoja Biblioteka</h2>
+            <p class="my-books-subtitle">Dostęp do Twoich e-booków i historia zakupów.</p>
+
+            <% if (books && books.length > 0) { %>
+                <div class="books-grid">
+                    <% books.forEach(book => { %>
+                        <div class="book-card">
+                            <img src="<%= book.cover_image_url || '/images/covers/no_cover.jpg' %>" alt="<%= book.title %>">
+                            <h3><%= book.title %></h3>
+                            <p><%= book.author_name %></p>
+                            
+                            <div style="padding: 0 15px 20px 15px; display: flex; flex-direction: column; gap: 10px;">
+                                <% if (book.is_digital_available) { %>
+                                    <a href="/read/<%= book.id %>" target="_blank" class="button primary small" style="width: 100%; display: flex; align-items:center; justify-content:center; gap:8px;">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                                        Czytaj teraz
+                                    </a>
+                                <% } else { %>
+                                    <button class="button secondary small" disabled style="width: 100%; opacity: 0.6; cursor: not-allowed; display:flex; align-items:center; justify-content:center; gap:8px;">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                                        Wersja fizyczna
+                                    </button>
+                                <% } %>
+
+                                <a href="/browse/<%= book.id %>" style="font-size: 0.9em; color: #666; text-decoration: none;">Zobacz szczegóły</a>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+            <% } else { %>
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#8D99AE" stroke-width="1.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                    </div>
+                    <h3 class="empty-state-title">Twoja biblioteczka jest pusta</h3>
+                    <p class="empty-state-text">Nie masz jeszcze żadnych książek.</p>
+                    <a href="/browse" class="button primary" style="margin-top: 2rem;">Przeglądaj sklep</a>
+                </div>
+            <% } %>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

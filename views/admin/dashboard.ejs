@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <title>Panel Administratora</title>
+    <%- include('../partials/head') %>
+</head>
+<body>
+    <%- include('../partials/header') %>
+    <main class="container-card" style="max-width: 1000px; margin: 40px auto;">
+        <h2 style="border-bottom: 2px solid #ef4444; padding-bottom: 10px; margin-bottom: 20px;">Panel Administratora</h2>
+        
+        <% if (typeof successMessage !== 'undefined' && successMessage) { %>
+            <p class="message success"><%= successMessage %></p>
+        <% } %>
+        <% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
+            <p class="message error"><%= errorMessage %></p>
+        <% } %>
+
+        <div class="features" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));">
+            
+            <a href="/admin/books/add" class="feature-item" style="text-decoration: none; color: inherit;">
+                <h3 style="font-size: 1.2rem;">➕ Dodaj Książkę</h3>
+                <p>Wprowadź nowy tytuł do sklepu</p>
+            </a>
+            
+            <a href="/admin/books" class="feature-item" style="text-decoration: none; color: inherit;">
+                <h3 style="font-size: 1.2rem;">📚 Lista Książek</h3>
+                <p>Usuń, ukryj lub przeglądaj stany magazynowe</p>
+            </a>
+
+            <a href="/admin/orders" class="feature-item" style="text-decoration: none; color: inherit;">
+                <h3 style="font-size: 1.2rem;">📦 Zamówienia</h3>
+                <p>Zmień status wysyłki, przeglądaj klientów</p>
+            </a>
+
+            <a href="/admin/users" class="feature-item" style="text-decoration: none; color: inherit;">
+                <h3 style="font-size: 1.2rem;">👥 Użytkownicy</h3>
+                <p>Zarządzaj rolami i kontami</p>
+            </a>
+
+        </div> 
+        </main>
+    <%- include('../partials/footer') %>
+</body>
+</html>

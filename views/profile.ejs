@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <title>Mój Profil - Księgarnia Online</title>
+    <%- include('partials/head') %>
+</head>
+<body>
+    <%- include('partials/header') %>
+ 
+    <main class="profile-page">
+        <div class="profile-container">
+            <h2 class="profile-title">Witaj, <%= username %>!</h2>
+            <p class="profile-subtitle">To jest Twój spersonalizowany panel użytkownika.</p>
+ 
+            <div class="profile-section">
+                <h3 style="display: flex; align-items: center; gap: 10px;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    Dane konta
+                </h3>
+                <div class="profile-info-grid">
+                    <div class="info-item">
+                        <strong>Nazwa użytkownika:</strong>
+                        <span><%= username %></span>
+                    </div>
+                </div>
+            </div>
+ 
+            <div class="profile-section">
+                <h3 style="display: flex; align-items: center; gap: 10px;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.09a2 2 0 0 1-1-1.74v-.47a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                    Opcje
+                </h3>
+                <div class="profile-options-grid">
+                    <a href="/my-books" class="profile-option-card">
+                        <h4>Moje książki</h4>
+                        <p>Wypożyczone i kupione tytuły.</p>
+                    </a>
+                    <a href="/order-history" class="profile-option-card">
+                        <h4>Historia zamówień</h4>
+                        <p>Zobacz swoje poprzednie zakupy.</p>
+                    </a>
+                    <a href="/settings" class="profile-option-card">
+                        <h4>Ustawienia konta</h4>
+                        <p>Zarządzaj swoimi danymi i preferencjami.</p>
+                    </a>
+                    <a href="/change-password" class="profile-option-card">
+                        <h4>Zmień hasło</h4>
+                        <p>Zaktualizuj swoje hasło dla bezpieczeństwa.</p>
+                    </a>
+                </div>
+            </div>
+ 
+            <p class="back-to-home"><a href="/">Wróć do strony głównej</a></p>
+        </div>
+    </main>
+ 
+    <%- include('partials/footer') %>
+</body>
+</html>

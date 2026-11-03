@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <title>Szukaj Książki - Księgarnia Online</title>
+    <%- include('partials/head') %>
+</head>
+<body>
+    <%- include('partials/header') %>
+ 
+    <main class="search-page">
+        <div class="search-container">
+            <h2>Szukaj Książki</h2>
+            <p class="search-subtitle">Wpisz frazę i wybierz, gdzie chcesz szukać</p>
+ 
+            <form action="/search" method="GET" class="search-form">
+                <div class="search-input-group">
+                    <div class="search-input-wrapper">
+                        <input
+                            type="text"
+                            name="q"
+                            id="search-query"
+                            class="search-input"
+                            placeholder="Wpisz frazę..."
+                            value="<%= query || '' %>"
+                            autofocus
+                            required
+                        >
+                        <select name="field" id="search-field" class="search-field-select">
+                            <option value="everywhere" <%= searchField === 'everywhere' ? 'selected' : '' %>>Wszędzie</option>
+                            <option value="title" <%= searchField === 'title' ? 'selected' : '' %>>Tytuł</option>
+                            <option value="author" <%= searchField === 'author' ? 'selected' : '' %>>Autor</option>
+                            <option value="isbn" <%= searchField === 'isbn' ? 'selected' : '' %>>ISBN</option>
+                            <option value="category" <%= searchField === 'category' ? 'selected' : '' %>>Kategoria</option>
+                            <option value="description" <%= searchField === 'description' ? 'selected' : '' %>>Opis</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="search-button">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        Szukaj
+                    </button>
+                </div>
+            </form>
+ 
+            <% if (typeof query !== 'undefined' && query) { %>
+                <div class="search-results-header">
+                    <% if (books && books.length > 0) { %>
+                        <p class="results-count">Znaleziono <strong><%= books.length %></strong> <%= books.length === 1 ? 'książkę' : books.length < 5 ? 'książki' : 'książek' %> dla "<strong><%= query %></strong>"</p>
+                    <% } else { %>
+                        <p class="no-results-message">Nie znaleziono książek dla "<strong><%= query %></strong>"</p>
+                        <p class="no-results-hint">Spróbuj użyć innych słów kluczowych lub <a href="/browse">przeglądaj wszystkie książki</a></p>
+                    <% } %>
+                </div>
+ 
+                <% if (books && books.length > 0) { %>
+                    <div class="books-grid">
+                        <% books.forEach(book => { %>
+                            <div class="book-card">
+                                <img src="<%= book.cover_image_url ? book.cover_image_url : '/images/covers/no_cover.jpg' %>" alt="<%= book.title %>" class="book-cover-image">
+                                <h3><%= book.title %></h3>
+                                <p><%= book.author_name %></p>
+                                <p class="book-category"><%= book.category_name %></p>
+                                
+                                <% if (book.is_digital_available && book.is_physical_available && book.physical_stock > 0) { %>
+                                    <p class="book-type">E-book i Książka</p>
+                                    <p class="book-price">E-book: <strong><%= book.digital_price %> PLN</strong></p>
+                                    <p class="book-price">Książka: <strong><%= book.physical_price %> PLN</strong></p>
+                                <% } else if (book.is_digital_available) { %>
+                                    <p class="book-type">E-book</p>
+                                    <p class="book-price">Cena: <strong><%= book.digital_price %> PLN</strong></p>
+                                <% } else if (book.is_physical_available && book.physical_stock > 0) { %>
+                                    <p class="book-type">Książka</p>
+                                    <p class="book-price">Cena: <strong><%= book.physical_price %> PLN</strong></p>
+                                <% } %>
+                               
+                                <a href="/browse/<%= book.id %>" class="button small">Szczegóły</a>
+                            </div>
+                        <% }); %>
+                    </div>
+                <% } %>
+            <% } else { %>
+                <div class="search-suggestions">
+                    <h3>Popularne wyszukiwania:</h3>
+                    <div class="suggestion-tags">
+                        <% if (popularTags && popularTags.length > 0) { %>
+                            <% popularTags.forEach(tag => { %>
+                                <a href="/search?q=<%= encodeURIComponent(tag.text) %>&field=<%= tag.field %>" class="suggestion-tag"><%= tag.text %></a>
+                            <% }); %>
+                        <% } else { %>
+                            <p>Brak popularnych książek/autorów do wyświetlenia.</p>
+                        <% } %>
+                    </div>
+                    <p class="search-tip" style="display:flex; align-items:center; justify-content:center; gap:8px;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M15.09 14c.18-.9.66-1.74 1.41-2.5A4.65 4.65 0 0 0 12 4 4.65 4.65 0 0 0 7.5 11.5c.75.76 1.23 1.6 1.41 2.5"></path></svg>
+                        <strong>Wskazówka:</strong> Możesz wyszukać konkretny typ, wybierając go z listy obok pola wyszukiwania.
+                    </p>
+                </div>
+            <% } %>
+        </div>
+    </main>
+ 
+    <%- include('partials/footer') %>
+</body>
+</html>

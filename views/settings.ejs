@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <title>Ustawienia Konta - Księgarnia Online</title>
+    <%- include('partials/head') %>
+</head>
+<body>
+    <%- include('partials/header') %>
+ 
+    <main class="form-page">
+        <div class="form-container">
+            <h2>Ustawienia Konta</h2>
+            <p class="profile-subtitle">Zaktualizuj swoje dane i preferencje.</p>
+ 
+            <% if (typeof successMessage !== 'undefined' && successMessage) { %>
+                <p class="message success"><%= successMessage %></p>
+            <% } %>
+ 
+            <% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
+                <p class="message error"><%= errorMessage %></p>
+            <% } %>
+ 
+            <form action="/settings" method="POST" novalidate>
+                <h3>Dane podstawowe</h3>
+                <div class="form-group">
+                    <label for="username">Nazwa użytkownika:</label>
+                    <input type="text" id="username" name="username" value="<%= user.username %>" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Adres e-mail:</label>
+                    <input type="text" id="email" name="email" value="<%= user.email %>" required>
+                </div>
+                <div class="form-group">
+                    <label for="first_name">Imię:</label>
+                    <input type="text" id="first_name" name="first_name" value="<%= user.first_name || '' %>">
+                </div>
+                <div class="form-group">
+                    <label for="last_name">Nazwisko:</label>
+                    <input type="text" id="last_name" name="last_name" value="<%= user.last_name || '' %>">
+                </div>
+ 
+                <h3 style="margin-top: var(--spacing-xl);">Adres wysyłki</h3>
+                <p style="text-align: left; color: var(--secondary-color); font-size: var(--font-size-sm); margin-bottom: var(--spacing-md);">
+                    Ten adres będzie używany do wysyłki książek fizycznych. Wypełnij tylko jeśli chcesz podać adres.
+                </p>
+                <div class="form-group">
+                    <label for="street">Ulica:</label>
+                    <input type="text" id="street" name="street" value="<%= address.street || '' %>">
+                </div>
+                <div class="form-group">
+                    <label for="house_number">Numer domu:</label>
+                    <input type="text" id="house_number" name="house_number" value="<%= address.house_number || '' %>">
+                </div>
+                <div class="form-group">
+                    <label for="apartment_number">Numer mieszkania/lokalu (opcjonalnie):</label>
+                    <input type="text" id="apartment_number" name="apartment_number" value="<%= address.apartment_number || '' %>">
+                </div>
+                <div class="form-group">
+                    <label for="city">Miasto:</label>
+                    <input type="text" id="city" name="city" value="<%= address.city || '' %>">
+                </div>
+                <div class="form-group">
+                    <label for="postal_code">Kod pocztowy:</label>
+                    <input type="text" id="postal_code" name="postal_code" value="<%= address.postal_code || '' %>" pattern="^[0-9]{2}-[0-9]{3}$" placeholder="np. 00-000">
+                </div>
+                <div class="form-group">
+                    <label for="country">Kraj:</label>
+                    <input type="text" id="country" name="country" value="<%= address.country || '' %>">
+                </div>
+                
+                <button type="submit" class="button primary" style="margin-top: var(--spacing-xl);">Zapisz zmiany</button>
+            </form>
+            <p style="margin-top: var(--spacing-lg);"><a href="/profile">Wróć do profilu</a></p>
+        </div>
+    </main>
+ 
+    <%- include('partials/footer') %>
+</body>
+</html>

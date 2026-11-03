@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <title>Przeglądaj Książki - Księgarnia Online</title>
+    <%- include('partials/head') %>
+</head>
+<body>
+    <%- include('partials/header') %>
+
+    <main class="browse-page">
+        <section class="book-showcase">
+            <h2>Dostępne Książki</h2>
+
+            <% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
+                <p class="message error"><%= errorMessage %></p>
+            <% } %>
+
+            <!-- OKIENKO FILTRÓW -->
+            <div class="filters-container">
+                <form action="/browse" method="GET" class="filters-form">
+                    
+                    <div class="filter-group">
+                        <label for="sort">Sortuj wg:</label>
+                        <select name="sort" id="sort" onchange="this.form.submit()">
+                            <option value="popularity" <%= sortBy === 'popularity' ? 'selected' : '' %>>Popularność</option>
+                            <option value="title_asc" <%= sortBy === 'title_asc' ? 'selected' : '' %>>Alfabetycznie A-Z</option>
+                            <option value="title_desc" <%= sortBy === 'title_desc' ? 'selected' : '' %>>Alfabetycznie Z-A</option>
+                            <option value="price_asc" <%= sortBy === 'price_asc' ? 'selected' : '' %>>Cena rosnąco</option>
+                            <option value="price_desc" <%= sortBy === 'price_desc' ? 'selected' : '' %>>Cena malejąco</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="category">Kategoria:</label>
+                        <select name="category" id="category" onchange="this.form.submit()">
+                            <option value="" <%= !selectedCategory ? 'selected' : '' %>>Wszystkie</option>
+                            <% categories.forEach(cat => { %>
+                                <option value="<%= cat.id %>" <%= selectedCategory == cat.id ? 'selected' : '' %>><%= cat.name %></option>
+                            <% }); %>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="type">Typ:</label>
+                        <select name="type" id="type" onchange="this.form.submit()">
+                            <option value="" <%= !selectedType ? 'selected' : '' %>>Wszystkie</option>
+                            <option value="digital" <%= selectedType === 'digital' ? 'selected' : '' %>>E-book</option>
+                            <option value="physical" <%= selectedType === 'physical' ? 'selected' : '' %>>Książka</option>
+                            <option value="both" <%= selectedType === 'both' ? 'selected' : '' %>>E-book i Książka</option>
+                        </select>
+                    </div>
+
+                    <% if (sortBy !== 'popularity' || selectedCategory || selectedType) { %>
+                        <div class="filter-group filter-reset">
+                            <a href="/browse" class="reset-link">✕ Wyczyść filtry</a>
+                        </div>
+                    <% } %>
+                    
+                </form>
+            </div>
+
+            <div class="books-grid">
+                <% if (books && books.length > 0) { %>
+                    <% books.forEach(book => { %>
+                        <div class="book-card">
+                            <img src="<%= book.cover_image_url ? book.cover_image_url : '/images/covers/no_cover.jpg' %>" alt="<%= book.title %>" class="book-cover-image">
+                            <h3><%= book.title %></h3>
+                            <p><%= book.author_name %></p>
+                            <p class="book-category"><%= book.category_name %></p>
+                            
+                            <% if (book.is_digital_available && book.is_physical_available && book.physical_stock > 0) { %>
+                                <p class="book-type">E-book i Książka</p>
+                                <p class="book-price">E-book: <strong><%= book.digital_price %> PLN</strong></p>
+                                <p class="book-price">Książka: <strong><%= book.physical_price %> PLN</strong></p>
+                            <% } else if (book.is_digital_available) { %>
+                                <p class="book-type">E-book</p>
+                                <p class="book-price">Cena: <strong><%= book.digital_price %> PLN</strong></p>
+                            <% } else if (book.is_physical_available && book.physical_stock > 0) { %>
+                                <p class="book-type">Książka</p>
+                                <p class="book-price">Cena: <strong><%= book.physical_price %> PLN</strong></p>
+                            <% } %>
+                            
+                            <a href="/browse/<%= book.id %>" class="button small">Szczegóły</a>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <p class="no-results">Brak książek spełniających wybrane kryteria.</p>
+                <% } %>
+            </div>
+        </section>
+    </main>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <title>Zarządzaj Zamówieniami - Admin</title>
+    <%- include('../partials/head') %>
+</head>
+<body>
+    <%- include('../partials/header') %>
+    
+    <main class="container-card" style="max-width: 1200px; margin: 40px auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="margin: 0;">Kontrola Zamówień</h2>
+        </div>
+
+        <div class="orders-table-container" style="box-shadow: none; border: 1px solid #eee;">
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th>ID / Data</th>
+                        <th>Klient</th>
+                        <th>Książka</th>
+                        <th>Adres / Dostawa</th>
+                        <th>Kwota</th>
+                        <th>Zmień Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% orders.forEach(order => { %>
+                        <tr>
+                            <td data-label="ID">
+                                <strong>#<%= order.id %></strong><br>
+                                <small style="color: #666;">
+                                    <%= new Date(order.created_at).toLocaleDateString('pl-PL') %><br>
+                                    <%= new Date(order.created_at).toLocaleTimeString('pl-PL', {hour: '2-digit', minute:'2-digit'}) %>
+                                </small>
+                            </td>
+                            <td data-label="Klient">
+                                <strong><%= order.first_name %> <%= order.last_name %></strong><br>
+                                <small><%= order.email %></small>
+                            </td>
+                            <td data-label="Książka">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <img src="<%= order.cover_image_url || '/images/covers/no_cover.jpg' %>" style="width: 30px; height: 45px; object-fit: cover; border-radius: 4px;">
+                                    <span><%= order.book_title %></span>
+                                </div>
+                            </td>
+                            <td data-label="Adres">
+                                <small>
+                                    <%= order.street %> <%= order.house_number %><br>
+                                    <%= order.postal_code %> <%= order.city %>
+                                </small>
+                            </td>
+                            <td data-label="Kwota" style="font-weight: bold; color: #4A90E2;">
+                                <%= order.total_price %> PLN
+                            </td>
+                            <td data-label="Status">
+                                <form action="/admin/orders/update-status" method="POST" style="display: flex; gap: 5px;">
+                                    <input type="hidden" name="order_id" value="<%= order.id %>">
+                                    
+                                    <select name="status" class="input-field" style="padding: 5px; font-size: 0.9rem; width: auto;">
+                                        <option value="new" <%= order.status === 'new' ? 'selected' : '' %>>Nowe</option>
+                                        <option value="paid" <%= order.status === 'paid' ? 'selected' : '' %>>Opłacone</option>
+                                        <option value="shipped" <%= order.status === 'shipped' ? 'selected' : '' %>>Wysłane</option>
+                                        <option value="completed" <%= order.status === 'completed' ? 'selected' : '' %>>Zakończone</option>
+                                        <option value="cancelled" <%= order.status === 'cancelled' ? 'selected' : '' %>>Anulowane</option>
+                                    </select>
+                                    <button type="submit" class="button primary small">OK</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+
+            <% if (orders.length === 0) { %>
+                <p style="padding: 20px; text-align: center;">Brak zamówień w systemie.</p>
+            <% } %>
+        </div>
+        
+        <p style="margin-top: 20px;"><a href="/admin">Wróć do dashboardu</a></p>
+    </main>
+    <%- include('../partials/footer') %>
+</body>
+</html>

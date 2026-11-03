@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <title>Dodaj Książkę - Admin</title>
+    <%- include('../partials/head') %>
+</head>
+<body>
+    <%- include('../partials/header') %>
+    <main class="form-page">
+        <div class="form-container" style="max-width: 800px;">
+            <h2>Dodaj nową książkę</h2>
+            
+            <% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
+                <p class="message error"><%= errorMessage %></p>
+            <% } %>
+
+            <form action="/admin/books/add" method="POST">
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label>Tytuł *</label>
+                        <input type="text" name="title" required value="<%= typeof formData !== 'undefined' ? formData.title : '' %>">
+                    </div>
+                    <div class="form-group half">
+                        <label>ISBN</label>
+                        <input type="text" name="isbn" maxlength="13" value="<%= typeof formData !== 'undefined' ? formData.isbn : '' %>">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label>Autor (Imię i Nazwisko) *</label>
+                        <input type="text" name="author_name" required placeholder="np. Stephen King" value="<%= typeof formData !== 'undefined' ? formData.author_name : '' %>">
+                    </div>
+                    <div class="form-group half">
+                        <label>Kategoria</label>
+                        <select name="category_id">
+                            <option value="">-- Wybierz kategorię --</option>
+                            <% categories.forEach(cat => { %>
+                                <option value="<%= cat.id %>" <%= (typeof formData !== 'undefined' && formData.category_id == cat.id) ? 'selected' : '' %>><%= cat.name %></option>
+                            <% }); %>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label>Rok wydania</label>
+                        <input type="number" name="publication_year" min="1000" max="2100" value="<%= typeof formData !== 'undefined' ? formData.publication_year : '' %>">
+                    </div>
+                    <div class="form-group half">
+                        <label>Link do okładki (URL w systemie)</label>
+                        <input type="text" name="cover_image_url" placeholder="/images/covers/okladka.jpg" value="<%= typeof formData !== 'undefined' ? formData.cover_image_url : '' %>">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Opis książki</label>
+                    <textarea name="description" rows="4"><%= typeof formData !== 'undefined' ? formData.description : '' %></textarea>
+                </div>
+
+                <h3 style="margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">Dostępność i Ceny</h3>
+
+                <div style="background: #fdfbf7; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <label style="display:flex; align-items:center; gap: 10px; font-weight: bold; cursor: pointer;">
+                        <input type="checkbox" name="is_physical_available" <%= (typeof formData !== 'undefined' && formData.is_physical_available) ? 'checked' : '' %>>
+                        Wersja Fizyczna Dostępna
+                    </label>
+                    <div class="form-row" style="margin-top: 10px;">
+                        <div class="form-group half">
+                            <label>Cena (PLN)</label>
+                            <input type="number" step="0.01" name="physical_price" value="<%= typeof formData !== 'undefined' ? formData.physical_price : '' %>">
+                        </div>
+                        <div class="form-group half">
+                            <label>Stan magazynowy</label>
+                            <input type="number" name="physical_stock" value="<%= typeof formData !== 'undefined' ? formData.physical_stock : '0' %>">
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: #eff6ff; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <label style="display:flex; align-items:center; gap: 10px; font-weight: bold; cursor: pointer;">
+                        <input type="checkbox" name="is_digital_available" <%= (typeof formData !== 'undefined' && formData.is_digital_available) ? 'checked' : '' %>>
+                        E-book Dostępny
+                    </label>
+                    <div class="form-row" style="margin-top: 10px;">
+                        <div class="form-group half">
+                            <label>Cena E-booka (PLN)</label>
+                            <input type="number" step="0.01" name="digital_price" value="<%= typeof formData !== 'undefined' ? formData.digital_price : '' %>">
+                        </div>
+                        <div class="form-group half">
+                            <label>Plik E-booka (np. /files/moj_ebook.pdf)</label>
+                            <input type="text" name="pdf_file_url" value="<%= typeof formData !== 'undefined' ? formData.pdf_file_url : '' %>">
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="button primary big" style="width: 100%">Dodaj Książkę</button>
+            </form>
+            <p><a href="/admin">Wróć do panelu</a></p>
+        </div>
+    </main>
+    <%- include('../partials/footer') %>
+</body>
+</html>
